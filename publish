@@ -1,0 +1,10 @@
+#!/bin/sh
+SRC=_drafts/$1.md
+if [ -e $SRC ];then
+    DATE=`date +"%Y-%m-%d"`
+    DEST=_posts/$DATE-$1.md
+    mv $SRC $DEST
+    echo "Published $SRC as $DEST"
+else
+    echo "Didn't find $1.md in _drafts/"
+fi
