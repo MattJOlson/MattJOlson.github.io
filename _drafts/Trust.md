@@ -1,0 +1,148 @@
+---
+layout: post
+title: Can you trust your team?
+---
+
+# Can you trust my code?
+
+Not too terribly long ago, a colleague of mine complained bitterly about
+the unreadability of some of our team's project code -- namely, small
+helper methods with what I'd always thought of as intention-revealing
+names. I'd always thought of this as a feature, not a bug, so I followed
+up: How could this _possibly_ be a bad thing? Don't small functions with
+intention-revealing names make code _easier_ to read, rather than
+harder?
+
+One of the culprits, it turns out, was a dirt-simple extension method
+we'd written after getting sick of more verbose test code:
+
+{% highlight C# %}
+public static TimeSpan Hrs(this int h)
+{
+    return new Timespan(h, 0, 0);
+}
+{% endhighlight %}
+
+(We called it `Hrs` to avoid conflicts with FluentAssertions' `Hours`
+helper -- turns out that if your domain involves scheduling you use this
+stuff all over.)
+
+When I asked how `4.Hrs()` was less readable than `new Timespan(4,0,0)`,
+I got a delayed-blast eye-opener:
+
+> When you run into methods like this that you don't recognize, that
+> don't follow normal C# or .NET conventions that everyone can be
+> expected to know, you have to stop and figure out what's going on.
+> Maybe it's enough just to mouse over the symbol and let IntelliSense
+> tell you what's getting returned, but often you have to go to the
+> method declaration and see what it's actually doing. It could be
+> anything, you don't know until you look.
+
+I was there when this helper method was born, so my first reaction was
+something on the order of "How the fuck does an `<int>.Hrs()` function
+not return exactly what you'd expect?!" But I'm chatting with a smart
+and experienced developer, so I took a firm hold on my vocabulary and
+fumbled through the rest of the conversation while half my brain tried
+to figure out what I was missing.
+
+# Can you trust the names I give my methods?
+
+This happened shortly after my colleague had joined the company. We're
+all working in what you could charitably call an extensively legacy
+codebase, with some modules reaching back into the dark ages and some
+others written from whole cloth last week. The VS Solution's not exactly
+what you'd call organized.
+
+How is anyone supposed to know, just by looking at the code, that
+`Hrs()` was written by someone sensible?
+
+There's the rub. We give things intention-revealing names because they
+cut through the clutter and reveal conceptual intent _if you can believe
+that they mean what they say_. That's not a given if you're wandering
+around a twisty maze of static classes, some of which were written ten
+years ago and some of which were written ten _hours_ ago. We have some
+gruesome code lurking around in the dark corners of our codebase.
+
+And for that matter, how is anyone supposed to _trust me to write
+sensible code_ until I've earned that trust?
+
+How can I prove that to you, if you've just joined my team as one of my
+peers?
+
+# Can you trust my decisions?
+
+Of course, this cuts both ways.
+
+Shortly after I'd joined one team, we were converging on Postgres as a
+persistence layer for a new project. Someone from on high overruled us
+and insisted that we use a document store instead. One of the reasons
+given was that:
+
+> ...traditional SQL databases expose too much programmatic
+> functionaliy, so someone who doesn't know any better could implement
+> business rules in something like triggers or stored procedures. That
+> would make them hard to discover, hard to test, and hard to version
+> control.
+
+I was the noob in the room, so my first reaction was something on the
+order of "If you don't trust me to not be that fucking stupid, why did
+you recruit me?" But that suspicion wasn't directed at _me_; it was
+future-idiot-proofing, rooted in bitter experience. 
+
+I also had more Postgres experience than anyone else in the room was
+willing to admit to, but that was decidedly secondary to the level of
+trust I'd built up if I wanted to influence the decision. And I can't
+fault anyone for it -- I had just stepped into a situation where
+everyone involved was gun-shy about creating more technical debt, and I
+had yet to show that I could put those broader cultural concerns over my
+own preference for a tool I liked and with which I was familiar.
+
+# Trust is fundamental
+
+Everything I do that makes agile software development come even close to
+working is based on trust.
+
+* When I review your code, I trust that you've made a best-effort
+  attempt to write good tests and refactor away conceptual duplication,
+  because there's not much chance I can understand the paths you've just
+  coded through as well as you can -- I'm vanishingly unlikely to spot
+  sins of omission
+* When you review my code, I trust that you're checking the tests I
+  wrote against whatever I just implemented, and that you're willing to
+  call me out on anything that doesn't make sense to you
+* When we estimate tickets before moving them into the "ready" column, I
+  trust that you've read through the acceptance criteria and thought at
+  least a little bit about how it should be done when you confidently
+  assert "Two or three days, tops!" -- or when I do, and you nod.
+* And most everything else.
+
+The thing is, I've never seen this addressed on _either_ side of the
+coin when someone new joins a team. Not "How do we give this person the
+opportunity to earn our trust?", and not "How do we show this person
+that we're worthy of their trust?" either. It's just generally expected
+to shake out through an implicit, ad-hoc process of "Well let's just try
+not to be incompetents, dickbags, or both".
+
+# And while I'm at it
+
+One of the commonly-praised features of strongly-typed functional
+programming is that you can often deduce a method's implementation from
+its type signature. For example, in Haskell, `map` is typed like so:
+
+{% highlight Haskell %}
+map :: (a -> b) -> [a] -> [b]
+{% endhighlight %}
+
+Now that's pretty damn obvious if you've seen `map` before. You take a
+function `f` from `a`s to `b`s, and a list of `a`s, and _obviously_ you
+return a list of `f(a)`s. But do you _really?_ What if `map f A` maps to
+`_|_` -- if it somehow never terminated? Or if it collected all the
+`f(a)`s and randomized them before returning `[b]`?
+
+That would be a terrible implementation of `map`, but either one would
+fit the raw type signature. Sure looks like we'd want some common
+conceptual ground in order to trust that J. Random Haskell Implementor
+got `map` right.
+
+"Common conceptual ground" sounds like another blog post. Let's stop
+here for the moment.
