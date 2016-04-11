@@ -1,0 +1,7 @@
+#!/bin/sh
+DRAFT=_drafts/$1.md
+if [ -e $DRAFT ];then
+    echo "Draft exists!"
+else
+    echo -e "---\nlayout: post\ntitle: ####\n---" > $DRAFT
+fi
