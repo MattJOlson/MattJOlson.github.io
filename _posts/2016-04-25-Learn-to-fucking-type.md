@@ -12,10 +12,10 @@ our _minds_ rather than with our keyboards and IDEs. We sculpt and
 refactor with a serene ease that would make Michelangelo cast down his
 chisels and stomp off in disgust were he only alive to see it.
 
-And then we stop, curse a blue streak that makes passing NCOs perk up
-and take notes, and backspace over the last seven characters to turn
-that `0` into a `0` -- no FUCK YOU, a `0` -- you little dog's ass it's
-a `-`.  _Finally!_  Where was I.
+And then we stop, curse a blue streak that makes passing bikers stop to
+take notes, and backspace over the last seven characters to turn that
+`0` into a `0` -- no FUCK YOU, a `0` -- you little dog's ass it's a `-`.
+_Finally!_  Where was I.
 
 For a breed of creature that likes to earn its living at a keyboard in a
 state of communion with the text editor behind it, most of us sure suck
