@@ -25,5 +25,14 @@ permalink: /now/
 # Thinking
 
 * [FsCheck](https://github.com/fscheck/FsCheck) as a gateway drug to F#
+* I need to finally get to one of [these
+  Meetups](http://www.meetup.com/DDD-CQRS-ES/events/230560616/)
 * Looking for a new place in the vicinity of Trout Lake or Cambie-Main
   off the Canada Line
+
+# [Typegun | Practice | Level OMG](http://typegun.com/)
+
+2016 May 1:
+
+* WPM: 45.0
+* Accuracy: 95.3%
