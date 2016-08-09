@@ -29,6 +29,7 @@ permalink: /now/
   Meetups](http://www.meetup.com/DDD-CQRS-ES/events/230560616/)
 * Looking for a new place in the vicinity of Trout Lake or Cambie-Main
   off the Canada Line
+* Continuous testing in Haskell?
 
 # [Typegun | Practice | Level OMG](http://typegun.com/)
 
