@@ -1,7 +1,11 @@
 ---
 layout: post
-title: F# Advent Calendar - Testing Suave WebParts
+title: An Introduction To Testing Suave WebParts
 ---
+
+> This is part of the excellent [F# Advent
+> Calendar](https://sergeytihon.wordpress.com/2016/10/23/f-advent-calendar-in-english-2016/),
+> if slightly delayed...
 
 One of the joys of working with [Suave](http://suave.io) is the
 testability that falls out of its composition model. To make those tests
@@ -30,7 +34,7 @@ just now.
 What's important here is that `HttpContext` contains all the properties
 we care about when testing our routing logic. We're going to build a
 bunch of tools that operate on `HttpContext`s, specifically focused on
-unit testing.
+testing this logic.
 
 For a deeper look at Suave routing, [have a look at the
 docs](https://suave.io/routing.html).
@@ -80,7 +84,7 @@ that, we can throw it at a WebPart and see what we get:
 [<Test>]
 let ``resource/ with an integer parameter returns 200 OK`` () =
     GetRequest "/resource/1337" 
-    |> mySexyRouter
+    |> mySuaveRouter
     |> ...?
 {% endhighlight %}
 
@@ -107,7 +111,7 @@ let extractStatus hc = hc.response.status
 [<Test>]
 let ``resource/ with an integer parameter returns 200 OK`` () =
     GetRequest "/resource/1337" 
-    |> mySexyRouter
+    |> mySuaveRouter
     |> extractContext
     |> extractStatus
     |> should equal HTTP_200
@@ -139,7 +143,7 @@ let contentAsString hc =
 [<Test>]
 let ``resource/ returns the integer ID of the requested resource`` () =
     GetRequest "/resource/1337"
-    |> mySexyRouter
+    |> mySuaveRouter
     |> extractContext
     |> contentAsString
     |> should haveSubstring ``"id": 1337``
@@ -154,4 +158,52 @@ open in a browser tab (or maybe an IDE).
 
 # A Word About Routers
 
+You'll notice that I'm calling the router with a single argument (as I
+ought to, since `WebPart`s are defined on a single argument). Obviously,
+any meaningful webservice is going to have external dependencies --
+persistence stores, monitoring integrations, that sort of thing. I don't
+want to spin those up every time I run a test, so what gives?
 
+Basically, I can define that router as a partial function that takes
+those dependencies as parameters, and stub in whatever I need for
+testing. So, something like:
+
+{% highlight ocaml %}
+let lookupSucceeds (l : Suave.Logging.Logger) (n : int) =
+    Resource.empty |> Some
+let fakeLogger = { new Suave.Logging.Logger with
+    member l.Log level logfn = ()
+}
+
+let mySuaveRouter = myUnderlyingRouter fakeLogger lookupSucceeds
+{% endhighlight %}
+
+This lets me test failure cases, too:
+
+{% highlight ocaml %}
+let lookupFails (l : Suave.Logging.Logger) (n : int) = None
+
+[<Test>]
+let ``resource/ returns 404 if the resource can't be found`` () =
+    GetRequest "/resource/1337" 
+    |> (myUnderlyingRouter fakeLogger lookupFails)
+    |> extractContext
+    |> extractStatus
+    |> should equal HTTP_404
+{% endhighlight %}
+
+This is just dependency injection, only we're doing it without a
+container. The ease with which F# lets us pass around partially-applied
+functions makes a DI container unnecessary.
+
+# Wrapping Up
+
+This has been a high-level look at testing Suave's routing logic.
+There's certainly more to say -- we could use
+[Aether](https://xyncro.tech/aether/guides/) for deeper inspection and
+manipulation of `HttpContext`s, look at the advantages of testing an
+HTTP resource's routing at the top level versus testing smaller composed
+units, and so on -- but this is the workflow I've stumbled upon and made
+work for production code. I hope you've found it helpful.
+
+[Read the rest of the F# Advent Calendar here](https://sergeytihon.wordpress.com/2016/10/23/f-advent-calendar-in-english-2016/)
