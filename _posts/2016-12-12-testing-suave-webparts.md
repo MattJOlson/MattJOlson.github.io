@@ -55,8 +55,9 @@ let GetRequest u =
     { HttpContext.empty with request = req }
 {% endhighlight %}
 
-This is perfectly usable as-is, but we can separate some concerns by
-splitting the method and URI parts, and calling them separately:
+This is perfectly usable as-is, but I'm just noticing that we can
+separate some concerns by splitting the method and URI parts, and
+calling them separately:
 
 {% highlight ocaml %}
 let WithUri u hc =
@@ -77,8 +78,11 @@ let GetRequest u =
 {% endhighlight %}
 
 This shows off our general pattern for building test data: We're writing
-combinators on `HttpContext`, adding info as we need to. Once we've done
-that, we can throw it at a WebPart and see what we get:
+combinators on `HttpContext`, adding info as we need to. We can use the
+same approach to add headers, fill in a request body, set cookies, and
+so on. For now we'll proceed with what we have.
+
+Once we've done that, we can throw it at a WebPart and see what we get:
 
 {% highlight ocaml %}
 [<Test>]
@@ -88,7 +92,8 @@ let ``resource/ with an integer parameter returns 200 OK`` () =
     |> ...?
 {% endhighlight %}
 
-(I'm using NUnit, but that's more or less irrelevant.)
+(I'm using NUnit and [FsUnit](https://fsprojects.github.io/FsUnit/), but
+that's more or less irrelevant.)
 
 So we threw in an `HttpContext` with a well-populated request, and we'd
 like to examine the result... but we need to unwrap it first. This part
@@ -131,7 +136,7 @@ is calling a function!
 Let's try something else. Maybe our GET resource is supposed to return a
 JSON document with the resource ID in it, and we want to do a simple
 string match to verify that. We'll need a way to get the response body,
-but that's not quite as simple as it seems:
+which means destructuring another internal type:
 
 {% highlight ocaml %}
 let contentAsString hc = 
@@ -149,10 +154,17 @@ let ``resource/ returns the integer ID of the requested resource`` () =
     |> should haveSubstring ``"id": 1337``
 {% endhighlight %}
 
-Nothing particularly surprising there, except maybe the structure of
-`hc.result.content`. A lot of the Suave testing story involves digging
-into the types in `HttpContext` and figuring out what needs to be set
-(or matched on), where. For that, you'll want to keep
+Nothing particularly surprising there. As with `GetRequest`, we're
+reaching into the `HttpContext` for the data we need, this time pulling
+out bits of the result. Because the `HttpContext` object tracks the
+state of the whole web call, it has a lot of structure to it. If you're
+used to dealing with `IHttpActionResult`s, your standard approach might
+be combining educated guesses with autocompletion, but that's likely to
+be less effective here.
+
+A lot of the Suave testing story involves digging into the types in
+`HttpContext` and figuring out what needs to be set (or matched on),
+where. For that, you'll want to keep
 [Http.fs](https://github.com/SuaveIO/suave/blob/master/src/Suave/Http.fs)
 open in a browser tab (or maybe an IDE).
 
@@ -205,5 +217,8 @@ manipulation of `HttpContext`s, look at the advantages of testing an
 HTTP resource's routing at the top level versus testing smaller composed
 units, and so on -- but this is the workflow I've stumbled upon and made
 work for production code. I hope you've found it helpful.
+
+If/when you notice something I can improve, please let me know about it
+on Twitter.
 
 [Read the rest of the F# Advent Calendar here](https://sergeytihon.wordpress.com/2016/10/23/f-advent-calendar-in-english-2016/)
