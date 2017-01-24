@@ -69,3 +69,13 @@ try installing:
   -that worked
 
 ctrl-F5 builds, yey
+
+interesting, if you open in the top-level ctrl-F5 will build into
+./build/ by default, not e.g. fsprojdir/bin/Debug/
+
+C-S-P Paket: Add NuGet package | Newtonsoft.Json
+How to add it as a reference tho, it's included in the .fsproj but
+doesn't autocomplete
+ah, not downloaded I guess? No, it's in ./packages/Newtonsoft.Json
+Aha! Open foo.fsproj, from that buffer, CSP Paket Add Nuget Package (to
+current project)
