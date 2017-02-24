@@ -79,3 +79,5 @@ doesn't autocomplete
 ah, not downloaded I guess? No, it's in ./packages/Newtonsoft.Json
 Aha! Open foo.fsproj, from that buffer, CSP Paket Add Nuget Package (to
 current project)
+- That adds it to foo.fsproj and paket.dependencies, but build can't
+  find it
