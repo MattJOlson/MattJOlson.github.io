@@ -30,7 +30,7 @@ Right?
 > - Uncle Bob, _The Clean Coder_
 
 We've been working on a "from-scratch" rewrite against horrid legacy
-systems nobody dares to touch. It sounds like a classic softwar horror
+systems nobody dares to touch. It sounds like a classic software horror
 story, the second-system effect (this is actually the _fifth_ system by
 my count), but it's coming along fairly well (if at a slog). The
 previous systems were written to specific contracts (and then maladapted
@@ -126,7 +126,7 @@ to do _new_ work; more, if my company's not obnoxious about meetings.
 Not really that much of a difference, is it?
 
 People often see refactoring as re-work, but that ignores the benefit of
-reviewing - re-_viewing_ - the code with fresh eyes and more knowledge.
+reviewing - re- _viewing_ - the code with fresh eyes and more knowledge.
 Of having the opportunity to incorporate that new knowledge into the
 codebase, be it a better understanding of the domain or just a better
 understanding of that one library we're using.
