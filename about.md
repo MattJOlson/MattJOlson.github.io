@@ -4,8 +4,8 @@ title: About
 permalink: /about/
 ---
 
-My name's Matt Olson. I'm a nerd; currently that's pronounced "polyglot
-developer".
+My name's Matt Olson. I'm a nerd; currently that's pronounced
+"engineering manager". I didn't get to pick the title.
 
 I have a Ph.D. in computer graphics, where I focused on doing neat
 things with silhouette curves on surface models. I don't do that for
